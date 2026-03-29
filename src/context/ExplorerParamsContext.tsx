@@ -1,6 +1,11 @@
-import { PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
-
-import { deriveAnalysisWindow } from '../utils/date';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { deriveAnalysisWindow } from "../utils/date";
 
 interface ExplorerParamsContextValue {
   userId: string;
@@ -11,11 +16,13 @@ interface ExplorerParamsContextValue {
 }
 
 const DEFAULT_PARAMS = {
-  userId: 'user_123',
-  scoreFrom: '2026-02-20',
+  userId: "user_123",
+  scoreFrom: "2026-02-20",
 };
 
-const ExplorerParamsContext = createContext<ExplorerParamsContextValue | null>(null);
+const ExplorerParamsContext = createContext<ExplorerParamsContextValue | null>(
+  null,
+);
 
 export function ExplorerParamsProvider({ children }: PropsWithChildren) {
   const [params, setParams] = useState(DEFAULT_PARAMS);
@@ -41,7 +48,9 @@ export function useExplorerParams() {
   const value = useContext(ExplorerParamsContext);
 
   if (!value) {
-    throw new Error('useExplorerParams must be used within ExplorerParamsProvider');
+    throw new Error(
+      "useExplorerParams must be used within ExplorerParamsProvider",
+    );
   }
 
   return value;

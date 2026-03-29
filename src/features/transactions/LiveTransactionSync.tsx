@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
-import { useQueryClient } from '@tanstack/react-query';
-import EventSource from 'react-native-sse';
-
-import { cashflowQueryKey } from '../../api/cashflow';
-import { reliabilityQueryKey } from '../../api/reliability';
-import { sortTransactions, transactionsQueryKey } from '../../api/transactions';
-import { Transaction, TransactionEvent } from '../../api/types';
-import { API_BASE_URL } from '../../config/api';
-import { useExplorerParams } from '../../context/ExplorerParamsContext';
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { AppState, AppStateStatus } from "react-native";
+import EventSource from "react-native-sse";
+import { cashflowQueryKey } from "../../api/cashflow";
+import { reliabilityQueryKey } from "../../api/reliability";
+import { sortTransactions, transactionsQueryKey } from "../../api/transactions";
+import { Transaction, TransactionEvent } from "../../api/types";
+import { API_BASE_URL } from "../../config/api";
+import { useExplorerParams } from "../../context/ExplorerParamsContext";
 
 function applyTransactionEvent(
   currentTransactions: Transaction[] | undefined,
@@ -17,14 +16,17 @@ function applyTransactionEvent(
   const existingTransactions = currentTransactions ?? [];
 
   switch (transactionEvent.type) {
-    case 'TRANSACTION_ADDED': {
+    case "TRANSACTION_ADDED": {
       const withoutExisting = existingTransactions.filter(
         (transaction) => transaction.id !== transactionEvent.transaction.id,
       );
 
-      return sortTransactions([...withoutExisting, transactionEvent.transaction]);
+      return sortTransactions([
+        ...withoutExisting,
+        transactionEvent.transaction,
+      ]);
     }
-    case 'TRANSACTION_UPDATED': {
+    case "TRANSACTION_UPDATED": {
       return sortTransactions(
         existingTransactions.map((transaction) =>
           transaction.id === transactionEvent.transaction_id
@@ -37,7 +39,7 @@ function applyTransactionEvent(
         ),
       );
     }
-    case 'TRANSACTION_DELETED':
+    case "TRANSACTION_DELETED":
       return existingTransactions.filter(
         (transaction) => transaction.id !== transactionEvent.transaction_id,
       );
@@ -48,12 +50,15 @@ function applyTransactionEvent(
 
 export function LiveTransactionSync() {
   const queryClient = useQueryClient();
-  const { userId, scoreFrom, transactionFrom, transactionTo } = useExplorerParams();
-  const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
+  const { userId, scoreFrom, transactionFrom, transactionTo } =
+    useExplorerParams();
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState,
+  );
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', setAppState);
+    const subscription = AppState.addEventListener("change", setAppState);
 
     return () => {
       subscription.remove();
@@ -61,15 +66,20 @@ export function LiveTransactionSync() {
   }, []);
 
   useEffect(() => {
-    if (appState !== 'active' || !userId || !transactionFrom || !transactionTo) {
+    if (
+      appState !== "active" ||
+      !userId ||
+      !transactionFrom ||
+      !transactionTo
+    ) {
       return;
     }
 
-    const eventSource = new EventSource<'connected' | 'transaction'>(
+    const eventSource = new EventSource<"connected" | "transaction">(
       `${API_BASE_URL}/api/users/${userId}/transaction-events`,
       {
         headers: {
-          Accept: 'text/event-stream',
+          Accept: "text/event-stream",
         },
         timeout: 0,
         pollingInterval: 5_000,
@@ -107,7 +117,7 @@ export function LiveTransactionSync() {
       }
     };
 
-    eventSource.addEventListener('transaction', onTransactionEvent);
+    eventSource.addEventListener("transaction", onTransactionEvent);
 
     return () => {
       eventSource.removeAllEventListeners();
@@ -118,7 +128,14 @@ export function LiveTransactionSync() {
         reconnectTimerRef.current = null;
       }
     };
-  }, [appState, queryClient, scoreFrom, transactionFrom, transactionTo, userId]);
+  }, [
+    appState,
+    queryClient,
+    scoreFrom,
+    transactionFrom,
+    transactionTo,
+    userId,
+  ]);
 
   return null;
 }

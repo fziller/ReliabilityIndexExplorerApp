@@ -1,27 +1,36 @@
-import { useDeferredValue, useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import { Button, Text } from 'react-native-paper';
-
-import { getErrorMessage } from '../api/client';
-import { useTransactionsQuery } from '../api/transactions';
-import { QueryControlsCard } from '../components/QueryControlsCard';
-import { EmptyStateCard, ErrorStateCard, LoadingStateCard } from '../components/StateCards';
-import { TransactionFiltersCard } from '../components/TransactionFiltersCard';
-import { TransactionRow } from '../components/TransactionRow';
-import { useExplorerParams } from '../context/ExplorerParamsContext';
+import { FlashList } from "@shopify/flash-list";
+import { useDeferredValue, useMemo, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Button, Text } from "react-native-paper";
+import { getErrorMessage } from "../api/client";
+import { useTransactionsQuery } from "../api/transactions";
+import { QueryControlsCard } from "../components/QueryControlsCard";
+import {
+  EmptyStateCard,
+  ErrorStateCard,
+  LoadingStateCard,
+} from "../components/StateCards";
+import { TransactionFiltersCard } from "../components/TransactionFiltersCard";
+import { TransactionRow } from "../components/TransactionRow";
+import { useExplorerParams } from "../context/ExplorerParamsContext";
 import {
   defaultTransactionFilters,
   filterAndSortTransactions,
   getCategories,
   TransactionFilters,
-} from '../features/transactions/filters';
-import { semanticColors } from '../theme/theme';
+} from "../features/transactions/filters";
+import { semanticColors } from "../theme/theme";
 
 export function TransactionsScreen() {
   const { userId, transactionFrom, transactionTo } = useExplorerParams();
-  const transactionsQuery = useTransactionsQuery(userId, transactionFrom, transactionTo);
-  const [filters, setFilters] = useState<TransactionFilters>(defaultTransactionFilters);
+  const transactionsQuery = useTransactionsQuery(
+    userId,
+    transactionFrom,
+    transactionTo,
+  );
+  const [filters, setFilters] = useState<TransactionFilters>(
+    defaultTransactionFilters,
+  );
   const deferredSearch = useDeferredValue(filters.merchantSearch);
 
   const effectiveFilters = useMemo(
@@ -38,11 +47,12 @@ export function TransactionsScreen() {
   );
 
   const visibleTransactions = useMemo(
-    () => filterAndSortTransactions(transactionsQuery.data ?? [], effectiveFilters),
+    () =>
+      filterAndSortTransactions(transactionsQuery.data ?? [], effectiveFilters),
     [effectiveFilters, transactionsQuery.data],
   );
 
-  const currency = 'EUR';
+  const currency = "EUR";
 
   if (transactionsQuery.isLoading && !transactionsQuery.data) {
     return (
@@ -94,9 +104,9 @@ export function TransactionsScreen() {
             />
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
                 gap: 12,
                 marginBottom: 12,
               }}
@@ -119,7 +129,8 @@ export function TransactionsScreen() {
                 message="There are no transactions in the current analysis window."
               />
             ) : null}
-            {transactionsQuery.data?.length && visibleTransactions.length === 0 ? (
+            {transactionsQuery.data?.length &&
+            visibleTransactions.length === 0 ? (
               <EmptyStateCard
                 title="Filters removed everything"
                 message="Try a different category, search term or direction."
@@ -127,7 +138,9 @@ export function TransactionsScreen() {
             ) : null}
           </View>
         }
-        renderItem={({ item }) => <TransactionRow item={item} currency={currency} />}
+        renderItem={({ item }) => (
+          <TransactionRow item={item} currency={currency} />
+        )}
         contentContainerStyle={{ paddingBottom: 24 }}
       />
     </View>

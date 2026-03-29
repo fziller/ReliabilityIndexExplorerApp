@@ -1,6 +1,5 @@
-import { ActivityIndicator, Button, Card, Text } from 'react-native-paper';
-
-import { semanticColors } from '../theme/theme';
+import { ActivityIndicator, Button, Card, Text } from "react-native-paper";
+import { semanticColors } from "../theme/theme";
 
 interface StateCardProps {
   title: string;
@@ -13,13 +12,19 @@ export function LoadingStateCard({ title, message }: StateCardProps) {
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content style={{ gap: 8 }}>
         <ActivityIndicator />
         <Text variant="titleMedium">{title}</Text>
         {message ? (
-          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+          <Text
+            variant="bodyMedium"
+            style={{ color: semanticColors.mutedText }}
+          >
             {message}
           </Text>
         ) : null}
@@ -28,16 +33,27 @@ export function LoadingStateCard({ title, message }: StateCardProps) {
   );
 }
 
-export function ErrorStateCard({ title, message, actionLabel, onAction }: StateCardProps) {
+export function ErrorStateCard({
+  title,
+  message,
+  actionLabel,
+  onAction,
+}: StateCardProps) {
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content style={{ gap: 8 }}>
         <Text variant="titleMedium">{title}</Text>
         {message ? (
-          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+          <Text
+            variant="bodyMedium"
+            style={{ color: semanticColors.mutedText }}
+          >
             {message}
           </Text>
         ) : null}
@@ -55,12 +71,18 @@ export function EmptyStateCard({ title, message }: StateCardProps) {
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content style={{ gap: 8 }}>
         <Text variant="titleMedium">{title}</Text>
         {message ? (
-          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+          <Text
+            variant="bodyMedium"
+            style={{ color: semanticColors.mutedText }}
+          >
             {message}
           </Text>
         ) : null}

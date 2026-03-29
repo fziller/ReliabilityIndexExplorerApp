@@ -1,43 +1,35 @@
-import { View } from 'react-native';
-import { Card, Divider, Text } from 'react-native-paper';
-
-import { semanticColors } from '../theme/theme';
+import { View } from "react-native";
+import { Card, Divider, Text } from "react-native-paper";
+import { semanticColors } from "../theme/theme";
+import { BulletRow } from "./molecules/BulletRow";
 
 interface ExplanationCardProps {
   positives: string[];
   risks: string[];
 }
 
-function BulletRow({ prefix, text, tone }: { prefix: string; text: string; tone: 'good' | 'risk' }) {
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
-      <Text
-        variant="titleMedium"
-        style={{ color: tone === 'good' ? semanticColors.positive : semanticColors.risk }}
-      >
-        {prefix}
-      </Text>
-      <Text variant="bodyMedium" style={{ flex: 1 }}>
-        {text}
-      </Text>
-    </View>
-  );
-}
-
 export function ExplanationCard({ positives, risks }: ExplanationCardProps) {
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content>
         <Text variant="titleMedium">Score Explanation</Text>
         <Text
           variant="bodyMedium"
-          style={{ marginTop: 6, marginBottom: 16, color: semanticColors.mutedText }}
+          style={{
+            marginTop: 6,
+            marginBottom: 16,
+            color: semanticColors.mutedText,
+          }}
         >
-          Positive signals come from the backend drivers. Risk signals are derived from
-          the metrics so the explanation does not hide the ugly bits.
+          Positive signals come from the backend drivers. Risk signals are
+          derived from the metrics so the explanation does not hide the ugly
+          bits.
         </Text>
         <Text variant="labelLarge" style={{ marginBottom: 10 }}>
           Positive Signals
@@ -57,7 +49,9 @@ export function ExplanationCard({ positives, risks }: ExplanationCardProps) {
               <BulletRow key={signal} prefix="-" text={signal} tone="risk" />
             ))
           ) : (
-            <Text variant="bodyMedium">No active risk flags in the current window.</Text>
+            <Text variant="bodyMedium">
+              No active risk flags in the current window.
+            </Text>
           )}
         </View>
       </Card.Content>

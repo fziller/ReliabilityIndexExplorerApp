@@ -1,4 +1,11 @@
-import { endOfMonth, format, isValid, parseISO, startOfMonth, subMonths } from 'date-fns';
+import {
+  endOfMonth,
+  format,
+  isValid,
+  parseISO,
+  startOfMonth,
+  subMonths,
+} from "date-fns";
 
 export interface AnalysisWindow {
   transactionFrom: string;
@@ -18,14 +25,14 @@ export function deriveAnalysisWindow(scoreFrom: string): AnalysisWindow {
 
   if (!isValid(parsed)) {
     return {
-      transactionFrom: '',
-      transactionTo: '',
+      transactionFrom: "",
+      transactionTo: "",
     };
   }
 
   return {
-    transactionFrom: format(startOfMonth(subMonths(parsed, 5)), 'yyyy-MM-dd'),
-    transactionTo: format(endOfMonth(parsed), 'yyyy-MM-dd'),
+    transactionFrom: format(startOfMonth(subMonths(parsed, 5)), "yyyy-MM-dd"),
+    transactionTo: format(endOfMonth(parsed), "yyyy-MM-dd"),
   };
 }
 
@@ -36,7 +43,7 @@ export function formatMonthLabel(month: string) {
     return month;
   }
 
-  return format(parsed, 'MMM');
+  return format(parsed, "MMM");
 }
 
 export function formatDisplayDate(value: string) {
@@ -46,5 +53,5 @@ export function formatDisplayDate(value: string) {
     return value;
   }
 
-  return format(parsed, 'dd MMM yyyy');
+  return format(parsed, "dd MMM yyyy");
 }

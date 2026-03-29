@@ -1,9 +1,19 @@
-import { useState } from 'react';
-import { View } from 'react-native';
-import { Button, Card, Menu, Searchbar, SegmentedButtons, Text } from 'react-native-paper';
-
-import { TransactionDirection, TransactionFilters, TransactionSort } from '../features/transactions/filters';
-import { semanticColors } from '../theme/theme';
+import { useState } from "react";
+import { View } from "react-native";
+import {
+  Button,
+  Card,
+  Menu,
+  Searchbar,
+  SegmentedButtons,
+  Text,
+} from "react-native-paper";
+import {
+  TransactionDirection,
+  TransactionFilters,
+  TransactionSort,
+} from "../features/transactions/filters";
+import { semanticColors } from "../theme/theme";
 
 interface TransactionFiltersCardProps {
   filters: TransactionFilters;
@@ -13,10 +23,10 @@ interface TransactionFiltersCardProps {
 }
 
 const SORT_OPTIONS: { label: string; value: TransactionSort }[] = [
-  { label: 'Newest first', value: 'DATE_DESC' },
-  { label: 'Oldest first', value: 'DATE_ASC' },
-  { label: 'Highest amount', value: 'AMOUNT_DESC' },
-  { label: 'Lowest amount', value: 'AMOUNT_ASC' },
+  { label: "Newest first", value: "DATE_DESC" },
+  { label: "Oldest first", value: "DATE_ASC" },
+  { label: "Highest amount", value: "AMOUNT_DESC" },
+  { label: "Lowest amount", value: "AMOUNT_ASC" },
 ];
 
 export function TransactionFiltersCard({
@@ -31,15 +41,23 @@ export function TransactionFiltersCard({
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content>
         <Text variant="titleMedium">Transaction Explorer</Text>
         <Text
           variant="bodyMedium"
-          style={{ marginTop: 6, marginBottom: 12, color: semanticColors.mutedText }}
+          style={{
+            marginTop: 6,
+            marginBottom: 12,
+            color: semanticColors.mutedText,
+          }}
         >
-          10k+ rows stay readable by virtualizing the list and keeping filtering local.
+          10k+ rows stay readable by virtualizing the list and keeping filtering
+          local.
         </Text>
         <Searchbar
           placeholder="Search merchant"
@@ -61,17 +79,27 @@ export function TransactionFiltersCard({
             })
           }
           buttons={[
-            { value: 'ALL', label: 'All' },
-            { value: 'POSITIVE', label: 'Positive' },
-            { value: 'NEGATIVE', label: 'Negative' },
+            { value: "ALL", label: "All" },
+            { value: "POSITIVE", label: "Positive" },
+            { value: "NEGATIVE", label: "Negative" },
           ]}
         />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+            marginTop: 12,
+          }}
+        >
           <Menu
             visible={categoryMenuVisible}
             onDismiss={() => setCategoryMenuVisible(false)}
             anchor={
-              <Button mode="contained-tonal" onPress={() => setCategoryMenuVisible(true)}>
+              <Button
+                mode="contained-tonal"
+                onPress={() => setCategoryMenuVisible(true)}
+              >
                 Category: {filters.category}
               </Button>
             }
@@ -94,7 +122,10 @@ export function TransactionFiltersCard({
             visible={sortMenuVisible}
             onDismiss={() => setSortMenuVisible(false)}
             anchor={
-              <Button mode="contained-tonal" onPress={() => setSortMenuVisible(true)}>
+              <Button
+                mode="contained-tonal"
+                onPress={() => setSortMenuVisible(true)}
+              >
                 Sort
               </Button>
             }
@@ -115,7 +146,7 @@ export function TransactionFiltersCard({
           </Menu>
         </View>
         <Text variant="labelLarge" style={{ marginTop: 12 }}>
-          {resultCount.toLocaleString('de-DE')} visible transactions
+          {resultCount.toLocaleString("de-DE")} visible transactions
         </Text>
       </Card.Content>
     </Card>

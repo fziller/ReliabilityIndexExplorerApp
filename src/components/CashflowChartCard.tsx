@@ -1,11 +1,10 @@
-import { useMemo } from 'react';
-import { Dimensions, View } from 'react-native';
-import { BarChart, barDataItem } from 'react-native-gifted-charts';
-import { Card, Chip, Text } from 'react-native-paper';
-
-import { CashflowMonth } from '../api/types';
-import { semanticColors } from '../theme/theme';
-import { formatMonthLabel } from '../utils/date';
+import { useMemo } from "react";
+import { Dimensions, View } from "react-native";
+import { BarChart, barDataItem } from "react-native-gifted-charts";
+import { Card, Chip, Text } from "react-native-paper";
+import { CashflowMonth } from "../api/types";
+import { semanticColors } from "../theme/theme";
+import { formatMonthLabel } from "../utils/date";
 
 interface CashflowChartCardProps {
   months: CashflowMonth[];
@@ -45,29 +44,51 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
   return (
     <Card
       mode="contained"
-      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
     >
       <Card.Content>
         <Text variant="titleMedium">Cashflow Timeline</Text>
         <Text
           variant="bodyMedium"
-          style={{ marginTop: 6, marginBottom: 12, color: semanticColors.mutedText }}
+          style={{
+            marginTop: 6,
+            marginBottom: 12,
+            color: semanticColors.mutedText,
+          }}
         >
           Monthly income versus essential expenses, sourced from the dedicated
           cashflow endpoint.
         </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-          <Chip compact icon="square-rounded" selectedColor={semanticColors.income}>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 8,
+            marginBottom: 16,
+          }}
+        >
+          <Chip
+            compact
+            icon="square-rounded"
+            selectedColor={semanticColors.income}
+          >
             Income
           </Chip>
-          <Chip compact icon="square-rounded" selectedColor={semanticColors.expenses}>
+          <Chip
+            compact
+            icon="square-rounded"
+            selectedColor={semanticColors.expenses}
+          >
             Essential expenses
           </Chip>
         </View>
-        <View style={{ overflow: 'hidden' }}>
+        <View style={{ overflow: "hidden" }}>
           <BarChart
             data={chartData}
-            width={Math.max(Dimensions.get('window').width - 88, 320)}
+            width={Math.max(Dimensions.get("window").width - 88, 320)}
             barWidth={18}
             initialSpacing={12}
             endSpacing={0}
@@ -79,12 +100,22 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
             yAxisColor={semanticColors.chartAxis}
             xAxisColor={semanticColors.chartAxis}
             yAxisTextStyle={{ color: semanticColors.mutedText, fontSize: 11 }}
-            xAxisLabelTextStyle={{ color: semanticColors.mutedText, fontSize: 11 }}
+            xAxisLabelTextStyle={{
+              color: semanticColors.mutedText,
+              fontSize: 11,
+            }}
             noOfSections={4}
             formatYLabel={(label) => `€${label}`}
           />
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 8,
+            marginTop: 12,
+          }}
+        >
           <Chip compact icon="bank-check">
             Income in {summary.monthsWithIncome}/{months.length} months
           </Chip>

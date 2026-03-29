@@ -1,6 +1,6 @@
 export function formatCurrency(value: number, currency: string) {
-  return new Intl.NumberFormat('de-DE', {
-    style: 'currency',
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
     currency,
     maximumFractionDigits: 2,
   }).format(value);
@@ -18,6 +18,10 @@ export function formatScoreBand(scoreBand: string) {
   return scoreBand.charAt(0).toUpperCase() + scoreBand.slice(1).toLowerCase();
 }
 
-export function pluralize(value: number, singular: string, plural = `${singular}s`) {
+export function pluralize(
+  value: number,
+  singular: string,
+  plural = `${singular}s`,
+) {
   return `${value} ${value === 1 ? singular : plural}`;
 }

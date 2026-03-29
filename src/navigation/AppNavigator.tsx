@@ -1,10 +1,9 @@
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-import { OverviewScreen } from '../screens/OverviewScreen';
-import { TransactionsScreen } from '../screens/TransactionsScreen';
-import { appTheme, semanticColors } from '../theme/theme';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import { OverviewScreen } from "../screens/OverviewScreen";
+import { TransactionsScreen } from "../screens/TransactionsScreen";
+import { appTheme, semanticColors } from "../theme/theme";
 
 type RootTabParamList = {
   Overview: undefined;
@@ -45,9 +44,17 @@ export function AppNavigator() {
           },
           tabBarIcon: ({ color, size }) => {
             const iconName =
-              route.name === 'Overview' ? 'chart-donut-variant' : 'format-list-bulleted';
+              route.name === "Overview"
+                ? "chart-donut-variant"
+                : "format-list-bulleted";
 
-            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            return (
+              <MaterialCommunityIcons
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
           },
         })}
       >
@@ -55,14 +62,14 @@ export function AppNavigator() {
           name="Overview"
           component={OverviewScreen}
           options={{
-            title: 'Reliability Explorer',
+            title: "Reliability Explorer",
           }}
         />
         <Tab.Screen
           name="Transactions"
           component={TransactionsScreen}
           options={{
-            title: 'Transactions',
+            title: "Transactions",
           }}
         />
       </Tab.Navigator>
