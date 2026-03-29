@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { BarChart, barDataItem } from 'react-native-gifted-charts';
 import { Card, Chip, Text } from 'react-native-paper';
 
@@ -43,14 +43,20 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
   }, [months]);
 
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
       <Card.Content>
         <Text variant="titleMedium">Cashflow Timeline</Text>
-        <Text variant="bodyMedium" style={styles.copy}>
+        <Text
+          variant="bodyMedium"
+          style={{ marginTop: 6, marginBottom: 12, color: semanticColors.mutedText }}
+        >
           Monthly income versus essential expenses, sourced from the dedicated
           cashflow endpoint.
         </Text>
-        <View style={styles.legend}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
           <Chip compact icon="square-rounded" selectedColor={semanticColors.income}>
             Income
           </Chip>
@@ -58,7 +64,7 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
             Essential expenses
           </Chip>
         </View>
-        <View style={styles.chartWrap}>
+        <View style={{ overflow: 'hidden' }}>
           <BarChart
             data={chartData}
             width={Math.max(Dimensions.get('window').width - 88, 320)}
@@ -69,16 +75,16 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
             roundedTop
             roundedBottom
             hideRules={false}
-            rulesColor="#D9D0C2"
-            yAxisColor="#8F8578"
-            xAxisColor="#8F8578"
-            yAxisTextStyle={styles.axisText}
-            xAxisLabelTextStyle={styles.axisText}
+            rulesColor={semanticColors.chartGrid}
+            yAxisColor={semanticColors.chartAxis}
+            xAxisColor={semanticColors.chartAxis}
+            yAxisTextStyle={{ color: semanticColors.mutedText, fontSize: 11 }}
+            xAxisLabelTextStyle={{ color: semanticColors.mutedText, fontSize: 11 }}
             noOfSections={4}
             formatYLabel={(label) => `€${label}`}
           />
         </View>
-        <View style={styles.summary}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
           <Chip compact icon="bank-check">
             Income in {summary.monthsWithIncome}/{months.length} months
           </Chip>
@@ -90,32 +96,3 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  copy: {
-    marginTop: 6,
-    marginBottom: 12,
-  },
-  legend: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
-  },
-  chartWrap: {
-    overflow: 'hidden',
-  },
-  summary: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 12,
-  },
-  axisText: {
-    color: '#6D6457',
-    fontSize: 11,
-  },
-});

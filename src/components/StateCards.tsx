@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, Card, Text } from 'react-native-paper';
+
+import { semanticColors } from '../theme/theme';
 
 interface StateCardProps {
   title: string;
@@ -10,11 +11,18 @@ interface StateCardProps {
 
 export function LoadingStateCard({ title, message }: StateCardProps) {
   return (
-    <Card mode="contained" style={styles.card}>
-      <Card.Content style={styles.content}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
+      <Card.Content style={{ gap: 8 }}>
         <ActivityIndicator />
         <Text variant="titleMedium">{title}</Text>
-        {message ? <Text variant="bodyMedium">{message}</Text> : null}
+        {message ? (
+          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+            {message}
+          </Text>
+        ) : null}
       </Card.Content>
     </Card>
   );
@@ -22,10 +30,17 @@ export function LoadingStateCard({ title, message }: StateCardProps) {
 
 export function ErrorStateCard({ title, message, actionLabel, onAction }: StateCardProps) {
   return (
-    <Card mode="contained" style={styles.card}>
-      <Card.Content style={styles.content}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
+      <Card.Content style={{ gap: 8 }}>
         <Text variant="titleMedium">{title}</Text>
-        {message ? <Text variant="bodyMedium">{message}</Text> : null}
+        {message ? (
+          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+            {message}
+          </Text>
+        ) : null}
         {actionLabel && onAction ? (
           <Button mode="contained-tonal" onPress={onAction}>
             {actionLabel}
@@ -38,20 +53,18 @@ export function ErrorStateCard({ title, message, actionLabel, onAction }: StateC
 
 export function EmptyStateCard({ title, message }: StateCardProps) {
   return (
-    <Card mode="contained" style={styles.card}>
-      <Card.Content style={styles.content}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
+      <Card.Content style={{ gap: 8 }}>
         <Text variant="titleMedium">{title}</Text>
-        {message ? <Text variant="bodyMedium">{message}</Text> : null}
+        {message ? (
+          <Text variant="bodyMedium" style={{ color: semanticColors.mutedText }}>
+            {message}
+          </Text>
+        ) : null}
       </Card.Content>
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  content: {
-    gap: 8,
-  },
-});

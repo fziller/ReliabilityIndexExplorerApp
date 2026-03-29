@@ -1,5 +1,5 @@
 import { useDeferredValue, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Button, Text } from 'react-native-paper';
 
@@ -16,6 +16,7 @@ import {
   getCategories,
   TransactionFilters,
 } from '../features/transactions/filters';
+import { semanticColors } from '../theme/theme';
 
 export function TransactionsScreen() {
   const { userId, transactionFrom, transactionTo } = useExplorerParams();
@@ -45,7 +46,10 @@ export function TransactionsScreen() {
 
   if (transactionsQuery.isLoading && !transactionsQuery.data) {
     return (
-      <ScrollView style={styles.screen} contentContainerStyle={styles.headerWrap}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 8 }}
+      >
         <QueryControlsCard />
         <LoadingStateCard
           title="Loading transactions"
@@ -57,7 +61,10 @@ export function TransactionsScreen() {
 
   if (transactionsQuery.isError) {
     return (
-      <ScrollView style={styles.screen} contentContainerStyle={styles.headerWrap}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 8 }}
+      >
         <QueryControlsCard />
         <ErrorStateCard
           title="Could not load transactions"
@@ -72,12 +79,12 @@ export function TransactionsScreen() {
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}>
       <FlashList
         data={visibleTransactions}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
-          <View style={styles.headerWrap}>
+          <View style={{ padding: 16, paddingBottom: 8 }}>
             <QueryControlsCard />
             <TransactionFiltersCard
               filters={filters}
@@ -85,7 +92,15 @@ export function TransactionsScreen() {
               resultCount={visibleTransactions.length}
               onFiltersChange={setFilters}
             />
-            <View style={styles.summaryRow}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 12,
+                marginBottom: 12,
+              }}
+            >
               <Text variant="bodyMedium">
                 Window: {transactionFrom} to {transactionTo}
               </Text>
@@ -113,28 +128,8 @@ export function TransactionsScreen() {
           </View>
         }
         renderItem={({ item }) => <TransactionRow item={item} currency={currency} />}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ paddingBottom: 24 }}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  headerWrap: {
-    padding: 16,
-    paddingBottom: 8,
-  },
-  content: {
-    paddingBottom: 24,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
-  },
-});

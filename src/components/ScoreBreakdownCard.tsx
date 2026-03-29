@@ -1,5 +1,6 @@
-import { StyleSheet, View } from 'react-native';
-import { Card, ProgressBar, Text } from 'react-native-paper';
+import { View } from "react-native";
+import { Card, ProgressBar, Text } from "react-native-paper";
+import { semanticColors } from "../theme/theme";
 
 interface ScoreBreakdownItem {
   label: string;
@@ -13,21 +14,48 @@ interface ScoreBreakdownCardProps {
 
 export function ScoreBreakdownCard({ items }: ScoreBreakdownCardProps) {
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card
+      mode="contained"
+      style={{
+        marginBottom: 16,
+        backgroundColor: semanticColors.cardBackground,
+      }}
+    >
       <Card.Content>
         <Text variant="titleMedium">Score Breakdown</Text>
-        <Text variant="bodyMedium" style={styles.copy}>
-          These four signals explain how the index is constructed and where the score
-          gets its shape.
+        <Text
+          variant="bodyMedium"
+          style={{
+            marginTop: 6,
+            marginBottom: 16,
+            color: semanticColors.mutedText,
+          }}
+        >
+          These four signals explain how the index is constructed and where the
+          score gets its shape.
         </Text>
-        <View style={styles.rows}>
+        <View style={{ gap: 14 }}>
           {items.map((item) => (
-            <View key={item.label} style={styles.row}>
-              <View style={styles.header}>
+            <View key={item.label} style={{ gap: 6 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  gap: 12,
+                }}
+              >
                 <Text variant="labelLarge">{item.label}</Text>
                 <Text variant="labelLarge">{item.display}</Text>
               </View>
-              <ProgressBar progress={item.value} style={styles.progressBar} />
+              <ProgressBar
+                progress={item.value}
+                style={{
+                  height: 10,
+                  borderRadius: 999,
+                  backgroundColor: semanticColors.chartGrid,
+                }}
+                color={semanticColors.accent}
+              />
             </View>
           ))}
         </View>
@@ -35,28 +63,3 @@ export function ScoreBreakdownCard({ items }: ScoreBreakdownCardProps) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  copy: {
-    marginTop: 6,
-    marginBottom: 16,
-  },
-  rows: {
-    gap: 14,
-  },
-  row: {
-    gap: 6,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  progressBar: {
-    height: 10,
-    borderRadius: 999,
-  },
-});

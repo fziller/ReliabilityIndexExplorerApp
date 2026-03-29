@@ -1,5 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Card, Divider, Text } from 'react-native-paper';
+
+import { semanticColors } from '../theme/theme';
 
 interface ExplanationCardProps {
   positives: string[];
@@ -8,14 +10,14 @@ interface ExplanationCardProps {
 
 function BulletRow({ prefix, text, tone }: { prefix: string; text: string; tone: 'good' | 'risk' }) {
   return (
-    <View style={styles.bulletRow}>
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
       <Text
         variant="titleMedium"
-        style={tone === 'good' ? styles.goodPrefix : styles.riskPrefix}
+        style={{ color: tone === 'good' ? semanticColors.positive : semanticColors.risk }}
       >
         {prefix}
       </Text>
-      <Text variant="bodyMedium" style={styles.bulletText}>
+      <Text variant="bodyMedium" style={{ flex: 1 }}>
         {text}
       </Text>
     </View>
@@ -24,26 +26,32 @@ function BulletRow({ prefix, text, tone }: { prefix: string; text: string; tone:
 
 export function ExplanationCard({ positives, risks }: ExplanationCardProps) {
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
       <Card.Content>
         <Text variant="titleMedium">Score Explanation</Text>
-        <Text variant="bodyMedium" style={styles.copy}>
+        <Text
+          variant="bodyMedium"
+          style={{ marginTop: 6, marginBottom: 16, color: semanticColors.mutedText }}
+        >
           Positive signals come from the backend drivers. Risk signals are derived from
           the metrics so the explanation does not hide the ugly bits.
         </Text>
-        <Text variant="labelLarge" style={styles.sectionTitle}>
+        <Text variant="labelLarge" style={{ marginBottom: 10 }}>
           Positive Signals
         </Text>
-        <View style={styles.group}>
+        <View style={{ gap: 10 }}>
           {positives.map((signal) => (
             <BulletRow key={signal} prefix="+" text={signal} tone="good" />
           ))}
         </View>
-        <Divider style={styles.divider} />
-        <Text variant="labelLarge" style={styles.sectionTitle}>
+        <Divider style={{ marginVertical: 16 }} />
+        <Text variant="labelLarge" style={{ marginBottom: 10 }}>
           Risk Signals
         </Text>
-        <View style={styles.group}>
+        <View style={{ gap: 10 }}>
           {risks.length ? (
             risks.map((signal) => (
               <BulletRow key={signal} prefix="-" text={signal} tone="risk" />
@@ -56,36 +64,3 @@ export function ExplanationCard({ positives, risks }: ExplanationCardProps) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  copy: {
-    marginTop: 6,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    marginBottom: 10,
-  },
-  group: {
-    gap: 10,
-  },
-  divider: {
-    marginVertical: 16,
-  },
-  bulletRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-  },
-  bulletText: {
-    flex: 1,
-  },
-  goodPrefix: {
-    color: '#2F7A5A',
-  },
-  riskPrefix: {
-    color: '#B33D2E',
-  },
-});

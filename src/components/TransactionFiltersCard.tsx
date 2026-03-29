@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button, Card, Menu, Searchbar, SegmentedButtons, Text } from 'react-native-paper';
 
 import { TransactionDirection, TransactionFilters, TransactionSort } from '../features/transactions/filters';
+import { semanticColors } from '../theme/theme';
 
 interface TransactionFiltersCardProps {
   filters: TransactionFilters;
@@ -28,10 +29,16 @@ export function TransactionFiltersCard({
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
 
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
       <Card.Content>
         <Text variant="titleMedium">Transaction Explorer</Text>
-        <Text variant="bodyMedium" style={styles.copy}>
+        <Text
+          variant="bodyMedium"
+          style={{ marginTop: 6, marginBottom: 12, color: semanticColors.mutedText }}
+        >
           10k+ rows stay readable by virtualizing the list and keeping filtering local.
         </Text>
         <Searchbar
@@ -43,7 +50,7 @@ export function TransactionFiltersCard({
               merchantSearch,
             })
           }
-          style={styles.searchbar}
+          style={{ marginBottom: 12 }}
         />
         <SegmentedButtons
           value={filters.direction}
@@ -59,7 +66,7 @@ export function TransactionFiltersCard({
             { value: 'NEGATIVE', label: 'Negative' },
           ]}
         />
-        <View style={styles.menus}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
           <Menu
             visible={categoryMenuVisible}
             onDismiss={() => setCategoryMenuVisible(false)}
@@ -107,32 +114,10 @@ export function TransactionFiltersCard({
             ))}
           </Menu>
         </View>
-        <Text variant="labelLarge" style={styles.resultCount}>
+        <Text variant="labelLarge" style={{ marginTop: 12 }}>
           {resultCount.toLocaleString('de-DE')} visible transactions
         </Text>
       </Card.Content>
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  copy: {
-    marginTop: 6,
-    marginBottom: 12,
-  },
-  searchbar: {
-    marginBottom: 12,
-  },
-  menus: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 12,
-  },
-  resultCount: {
-    marginTop: 12,
-  },
-});

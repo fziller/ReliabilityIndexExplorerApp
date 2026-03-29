@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Card, Chip, Text } from 'react-native-paper';
 
 import { Transaction } from '../api/types';
@@ -12,56 +12,43 @@ interface TransactionRowProps {
 }
 
 export function TransactionRow({ item, currency }: TransactionRowProps) {
-  const amountColor = item.amount >= 0 ? semanticColors.income : semanticColors.expenses;
+  const amountColor =
+    item.amount >= 0 ? semanticColors.income : semanticColors.expenses;
 
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card mode="contained" style={{ marginBottom: 10, backgroundColor: semanticColors.cardBackground }}>
       <Card.Content>
-        <View style={styles.header}>
-          <View style={styles.meta}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
+          <View style={{ flex: 1, gap: 2 }}>
             <Text variant="titleMedium">{item.merchant}</Text>
-            <Text variant="bodySmall">
+            <Text variant="bodySmall" style={{ color: semanticColors.mutedText }}>
               {formatDisplayDate(item.date)} • {item.account}
             </Text>
           </View>
-          <View style={styles.amounts}>
+          <View style={{ alignItems: 'flex-end', gap: 2 }}>
             <Text variant="titleMedium" style={{ color: amountColor }}>
               {formatCurrency(item.amount, currency)}
             </Text>
-            <Text variant="bodySmall">Balance {formatCurrency(item.balance, currency)}</Text>
+            <Text variant="bodySmall" style={{ color: semanticColors.mutedText }}>
+              Balance {formatCurrency(item.balance, currency)}
+            </Text>
           </View>
         </View>
-        <View style={styles.footer}>
+        <View
+          style={{
+            marginTop: 12,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
           <Chip compact>{item.category}</Chip>
-          <Text variant="bodySmall">ID: {item.id}</Text>
+          <Text variant="bodySmall" style={{ color: semanticColors.mutedText }}>
+            ID: {item.id}
+          </Text>
         </View>
       </Card.Content>
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  meta: {
-    flex: 1,
-    gap: 2,
-  },
-  amounts: {
-    alignItems: 'flex-end',
-    gap: 2,
-  },
-  footer: {
-    marginTop: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 8,
-  },
-});

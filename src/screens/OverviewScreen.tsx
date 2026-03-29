@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 import { useCashflowQuery } from '../api/cashflow';
@@ -65,8 +65,8 @@ export function OverviewScreen() {
 
   return (
     <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
+      style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
       refreshControl={
         <RefreshControl
           refreshing={reliabilityQuery.isRefetching || cashflowQuery.isRefetching}
@@ -94,10 +94,15 @@ export function OverviewScreen() {
         />
       ) : reliabilityQuery.data ? (
         <>
-          <Card mode="contained" style={styles.heroCard}>
+          <Card
+            mode="contained"
+            style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+          >
             <Card.Content>
               <Text variant="labelLarge">Reliability Overview</Text>
-              <View style={styles.heroTopRow}>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 16, marginTop: 12 }}
+              >
                 <View>
                   <Text variant="displaySmall" style={{ color: scoreTone }}>
                     {reliabilityQuery.data.reliability_index}
@@ -106,7 +111,7 @@ export function OverviewScreen() {
                     {formatScoreBand(reliabilityQuery.data.score_band)} confidence band
                   </Text>
                 </View>
-                <View style={styles.heroMeta}>
+                <View style={{ alignItems: 'flex-end', gap: 4 }}>
                   <Text variant="labelMedium">Score anchor</Text>
                   <Text variant="bodyMedium">{reliabilityQuery.data.from}</Text>
                   <Text variant="labelMedium">Analysis window</Text>
@@ -118,7 +123,7 @@ export function OverviewScreen() {
             </Card.Content>
           </Card>
 
-          <View style={styles.metricGrid}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
             <MetricCard
               label="Income regularity"
               value={formatPercent(reliabilityQuery.data.metrics.income_regularity)}
@@ -214,10 +219,10 @@ export function OverviewScreen() {
       )}
 
       {reliabilityQuery.data ? (
-        <Card mode="contained">
+        <Card mode="contained" style={{ backgroundColor: semanticColors.cardBackground }}>
           <Card.Content>
             <Text variant="titleMedium">Reading the score</Text>
-            <Text variant="bodyMedium" style={styles.footerCopy}>
+            <Text variant="bodyMedium" style={{ marginTop: 8, color: semanticColors.mutedText }}>
               Reliability is the top-line decision. Metrics quantify stability. Drivers
               translate those metrics into human language. Cashflow explains the monthly
               rhythm underneath the score.
@@ -226,7 +231,7 @@ export function OverviewScreen() {
               The score uses {reliabilityQuery.data.currency} amounts, so all balances and
               charts stay in the same unit.
             </Text>
-            <Text variant="bodyMedium" style={styles.footerCopy}>
+            <Text variant="bodyMedium" style={{ marginTop: 8, color: semanticColors.mutedText }}>
               Example monthly expense anchor: {formatCurrency(900, reliabilityQuery.data.currency)}
             </Text>
           </Card.Content>
@@ -235,35 +240,3 @@ export function OverviewScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  heroCard: {
-    marginBottom: 16,
-  },
-  heroTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-    marginTop: 12,
-  },
-  heroMeta: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  metricGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 16,
-  },
-  footerCopy: {
-    marginTop: 8,
-  },
-});

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button, Card, Chip, HelperText, Text, TextInput } from 'react-native-paper';
 
 import { useExplorerParams } from '../context/ExplorerParamsContext';
+import { semanticColors } from '../theme/theme';
 import { deriveAnalysisWindow, isIsoDate } from '../utils/date';
 
 export function QueryControlsCard() {
@@ -43,20 +44,26 @@ export function QueryControlsCard() {
   };
 
   return (
-    <Card mode="contained" style={styles.card}>
+    <Card
+      mode="contained"
+      style={{ marginBottom: 16, backgroundColor: semanticColors.cardBackground }}
+    >
       <Card.Content>
         <Text variant="titleMedium">Analyst Query Context</Text>
-        <Text variant="bodyMedium" style={styles.copy}>
+        <Text
+          variant="bodyMedium"
+          style={{ marginTop: 6, marginBottom: 12, color: semanticColors.mutedText }}
+        >
           One score anchor date drives the six-month cashflow and transaction window.
         </Text>
-        <View style={styles.inputs}>
+        <View style={{ gap: 12, marginBottom: 12 }}>
           <TextInput
             mode="outlined"
             label="User ID"
             value={draftUserId}
             onChangeText={setDraftUserId}
             autoCapitalize="none"
-            style={styles.input}
+            style={{ backgroundColor: 'transparent' }}
           />
           <TextInput
             mode="outlined"
@@ -64,10 +71,10 @@ export function QueryControlsCard() {
             value={draftScoreFrom}
             onChangeText={setDraftScoreFrom}
             autoCapitalize="none"
-            style={styles.input}
+            style={{ backgroundColor: 'transparent' }}
           />
         </View>
-        <View style={styles.chips}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
           <Chip compact icon="calendar-range">
             Transactions: {derivedWindow?.transactionFrom ?? transactionFrom} to{' '}
             {derivedWindow?.transactionTo ?? transactionTo}
@@ -86,26 +93,3 @@ export function QueryControlsCard() {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-  },
-  copy: {
-    marginTop: 6,
-    marginBottom: 12,
-  },
-  inputs: {
-    gap: 12,
-    marginBottom: 12,
-  },
-  input: {
-    backgroundColor: 'transparent',
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-});

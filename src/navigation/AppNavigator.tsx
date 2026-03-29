@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { OverviewScreen } from '../screens/OverviewScreen';
 import { TransactionsScreen } from '../screens/TransactionsScreen';
-import { appTheme } from '../theme/theme';
+import { appTheme, semanticColors } from '../theme/theme';
 
 type RootTabParamList = {
   Overview: undefined;
@@ -17,11 +17,11 @@ const navigationTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: appTheme.colors.background,
-    card: appTheme.colors.surface,
-    primary: appTheme.colors.primary,
-    text: appTheme.colors.onSurface,
-    border: appTheme.colors.outline,
+    background: semanticColors.screenBackground,
+    card: semanticColors.cardBackground,
+    primary: semanticColors.accent,
+    text: semanticColors.ink,
+    border: semanticColors.cardBorder,
   },
 };
 
@@ -31,17 +31,17 @@ export function AppNavigator() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerStyle: {
-            backgroundColor: appTheme.colors.surface,
+            backgroundColor: semanticColors.cardBackground,
           },
-          headerTintColor: appTheme.colors.onSurface,
+          headerTintColor: semanticColors.ink,
           tabBarStyle: {
-            backgroundColor: appTheme.colors.surface,
-            borderTopColor: appTheme.colors.outline,
+            backgroundColor: semanticColors.cardBackground,
+            borderTopColor: semanticColors.cardBorder,
           },
-          tabBarActiveTintColor: appTheme.colors.primary,
+          tabBarActiveTintColor: semanticColors.accent,
           tabBarInactiveTintColor: appTheme.colors.onSurfaceVariant,
           sceneStyle: {
-            backgroundColor: appTheme.colors.background,
+            backgroundColor: semanticColors.screenBackground,
           },
           tabBarIcon: ({ color, size }) => {
             const iconName =
