@@ -1,6 +1,5 @@
-import axios from 'axios';
-
-import { API_BASE_URL } from '../config/api';
+import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -10,16 +9,16 @@ export const apiClient = axios.create({
 export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const maybeMessage =
-      typeof error.response?.data?.error === 'string'
+      typeof error.response?.data?.error === "string"
         ? error.response.data.error
         : error.message;
 
-    return maybeMessage || 'Request failed';
+    return maybeMessage || "Request failed";
   }
 
   if (error instanceof Error) {
     return error.message;
   }
 
-  return 'Something went wrong';
+  return "Something went wrong";
 }

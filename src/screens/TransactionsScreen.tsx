@@ -4,11 +4,6 @@ import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { getErrorMessage } from "../api/client";
 import { QueryControlsCard } from "../components/QueryControlsCard";
-import {
-  EmptyStateCard,
-  ErrorStateCard,
-  LoadingStateCard,
-} from "../components/StateCards";
 import { TransactionFiltersCard } from "../components/TransactionFiltersCard";
 import { TransactionRow } from "../components/TransactionRow";
 import { useExplorerParams } from "../context/ExplorerParamsContext";
@@ -20,6 +15,9 @@ import {
 } from "../features/transactions/filters";
 import { semanticColors } from "../theme/theme";
 import { useTransactionsQuery } from "../hooks/useTransactionQuery";
+import LoadingStateCard from "../components/StateCards/LoadingStateCard";
+import ErrorStateCard from "../components/StateCards/ErrorStateCard";
+import EmptyStateCard from "../components/StateCards/EmptyStateCard";
 
 export function TransactionsScreen() {
   const { userId, transactionFrom, transactionTo } = useExplorerParams();
@@ -29,6 +27,7 @@ export function TransactionsScreen() {
     defaultTransactionFilters,
   );
 
+  // hooks
   const deferredSearch = useDeferredValue(filters.merchantSearch);
 
   // queries
