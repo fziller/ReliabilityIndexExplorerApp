@@ -2,15 +2,26 @@ import { useMemo } from "react";
 import { Dimensions, View } from "react-native";
 import { BarChart, barDataItem } from "react-native-gifted-charts";
 import { Card, Chip, Text } from "react-native-paper";
-import { CashflowMonth } from "../api/types";
 import { semanticColors } from "../theme/theme";
 import { formatMonthLabel } from "../utils/date";
+import { formatCurrency } from "../utils/format";
 
-interface CashflowChartCardProps {
-  months: CashflowMonth[];
+export interface MonthlyTransactionSummary {
+  month: string;
+  income: number;
+  expenses: number;
 }
 
-export function CashflowChartCard({ months }: CashflowChartCardProps) {
+interface CashflowChartCardProps {
+  months: MonthlyTransactionSummary[];
+  currency: string;
+}
+
+export function CashflowChartCard({
+  months,
+  currency,
+}: CashflowChartCardProps) {
+  // memos
   const chartData = useMemo<barDataItem[]>(() => {
     return months.flatMap((month, index) => [
       {
@@ -20,7 +31,7 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
         spacing: 6,
       },
       {
-        value: month.essential_expenses,
+        value: month.expenses,
         frontColor: semanticColors.expenses,
         spacing: index === months.length - 1 ? 12 : 24,
       },
@@ -30,8 +41,8 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
   const summary = useMemo(() => {
     const monthsWithIncome = months.filter((month) => month.income > 0).length;
     const weakestMonth = months.reduce((current, next) => {
-      const currentSurplus = current.income - current.essential_expenses;
-      const nextSurplus = next.income - next.essential_expenses;
+      const currentSurplus = current.income - current.expenses;
+      const nextSurplus = next.income - next.expenses;
       return nextSurplus < currentSurplus ? next : current;
     }, months[0]);
 
@@ -59,8 +70,8 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
             color: semanticColors.mutedText,
           }}
         >
-          Monthly income versus essential expenses, sourced from the dedicated
-          cashflow endpoint.
+          Monthly income versus expenses, derived from transaction activity in
+          the current analysis window.
         </Text>
         <View
           style={{
@@ -82,7 +93,7 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
             icon="square-rounded"
             selectedColor={semanticColors.expenses}
           >
-            Essential expenses
+            Expenses
           </Chip>
         </View>
         <View style={{ overflow: "hidden" }}>
@@ -105,7 +116,7 @@ export function CashflowChartCard({ months }: CashflowChartCardProps) {
               fontSize: 11,
             }}
             noOfSections={4}
-            formatYLabel={(label) => `€${label}`}
+            formatYLabel={(label) => formatCurrency(Number(label), currency)}
           />
         </View>
         <View

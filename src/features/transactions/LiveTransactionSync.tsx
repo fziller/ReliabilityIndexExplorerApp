@@ -2,21 +2,37 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import EventSource from "react-native-sse";
-import { cashflowQueryKey } from "../../api/cashflow";
-import { reliabilityQueryKey } from "../../api/reliability";
-import { sortTransactions, transactionsQueryKey } from "../../api/transactions";
+import { sortTransactions } from "../../api/transactions";
 import { Transaction, TransactionEvent } from "../../api/types";
 import { API_BASE_URL } from "../../config/api";
 import { useExplorerParams } from "../../context/ExplorerParamsContext";
+import { reliabilityQueryKey } from "../../hooks/useReliabilityQuery";
+import { transactionsQueryKey } from "../../hooks/useTransactionQuery";
+
+function isWithinWindow(date: string, from: string, to: string) {
+  return date >= from && date <= to;
+}
 
 function applyTransactionEvent(
   currentTransactions: Transaction[] | undefined,
   transactionEvent: TransactionEvent,
+  transactionFrom: string,
+  transactionTo: string,
 ) {
   const existingTransactions = currentTransactions ?? [];
 
   switch (transactionEvent.type) {
     case "TRANSACTION_ADDED": {
+      if (
+        !isWithinWindow(
+          transactionEvent.transaction.date,
+          transactionFrom,
+          transactionTo,
+        )
+      ) {
+        return existingTransactions;
+      }
+
       const withoutExisting = existingTransactions.filter(
         (transaction) => transaction.id !== transactionEvent.transaction.id,
       );
@@ -27,8 +43,8 @@ function applyTransactionEvent(
       ]);
     }
     case "TRANSACTION_UPDATED": {
-      return sortTransactions(
-        existingTransactions.map((transaction) =>
+      const updatedTransactions = existingTransactions
+        .map((transaction) =>
           transaction.id === transactionEvent.transaction_id
             ? {
                 ...transaction,
@@ -36,8 +52,12 @@ function applyTransactionEvent(
                 id: transaction.id,
               }
             : transaction,
-        ),
-      );
+        )
+        .filter((transaction) =>
+          isWithinWindow(transaction.date, transactionFrom, transactionTo),
+        );
+
+      return sortTransactions(updatedTransactions);
     }
     case "TRANSACTION_DELETED":
       return existingTransactions.filter(
@@ -96,7 +116,13 @@ export function LiveTransactionSync() {
 
         queryClient.setQueryData<Transaction[]>(
           transactionsQueryKey(userId, transactionFrom, transactionTo),
-          (current) => applyTransactionEvent(current, parsed),
+          (current) =>
+            applyTransactionEvent(
+              current,
+              parsed,
+              transactionFrom,
+              transactionTo,
+            ),
         );
 
         if (reconnectTimerRef.current) {
@@ -105,11 +131,15 @@ export function LiveTransactionSync() {
 
         reconnectTimerRef.current = setTimeout(() => {
           void queryClient.invalidateQueries({
-            queryKey: reliabilityQueryKey(userId, scoreFrom),
+            queryKey: transactionsQueryKey(
+              userId,
+              transactionFrom,
+              transactionTo,
+            ),
           });
 
           void queryClient.invalidateQueries({
-            queryKey: cashflowQueryKey(userId, transactionFrom, transactionTo),
+            queryKey: reliabilityQueryKey(userId, scoreFrom),
           });
         }, 300);
       } catch {

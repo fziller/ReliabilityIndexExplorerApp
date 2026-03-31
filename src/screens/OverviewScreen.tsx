@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Card, Text } from "react-native-paper";
-import { useCashflowQuery } from "../api/cashflow";
 import { getErrorMessage } from "../api/client";
-import { useReliabilityQuery } from "../api/reliability";
 import { CashflowChartCard } from "../components/CashflowChartCard";
 import { ExplanationCard } from "../components/ExplanationCard";
 import { MetricCard } from "../components/MetricCard";
@@ -21,27 +19,30 @@ import {
   formatPercent,
   formatRatio,
   formatScoreBand,
+  normalizeCoverageRatio,
   pluralize,
 } from "../utils/format";
-
-function normalizeCoverageRatio(value: number) {
-  return Math.max(0, Math.min(value / 2, 1));
-}
+import { buildMonthlyChartData } from "../utils/screenHelper";
+import { useReliabilityQuery } from "../hooks/useReliabilityQuery";
+import { useTransactionsQuery } from "../hooks/useTransactionQuery";
 
 export function OverviewScreen() {
   const { userId, scoreFrom, transactionFrom, transactionTo } =
     useExplorerParams();
 
+  // queries
   const reliabilityQuery = useReliabilityQuery(userId, scoreFrom);
-  const cashflowQuery = useCashflowQuery(
+  const transactionsQuery = useTransactionsQuery(
     userId,
     transactionFrom,
     transactionTo,
   );
 
-  const refresh = async () => {
-    await Promise.all([reliabilityQuery.refetch(), cashflowQuery.refetch()]);
-  };
+  // memos
+  const monthlyChartData = useMemo(
+    () => buildMonthlyChartData(transactionsQuery.data),
+    [transactionsQuery.data],
+  );
 
   const riskSignals = useMemo(() => {
     const metrics = reliabilityQuery.data?.metrics;
@@ -63,7 +64,7 @@ export function OverviewScreen() {
     }
 
     if (metrics.good_months < 6) {
-      risks.push(`Only ${metrics.good_months}/6 good cashflow months`);
+      risks.push(`Only ${metrics.good_months}/6 stable months`);
     }
 
     if (metrics.income_coverage_ratio < 1) {
@@ -72,6 +73,13 @@ export function OverviewScreen() {
 
     return risks;
   }, [reliabilityQuery.data?.metrics]);
+
+  const refresh = async () => {
+    await Promise.all([
+      reliabilityQuery.refetch(),
+      transactionsQuery.refetch(),
+    ]);
+  };
 
   const scoreTone =
     reliabilityQuery.data?.score_band === "HIGH"
@@ -87,7 +95,7 @@ export function OverviewScreen() {
       refreshControl={
         <RefreshControl
           refreshing={
-            reliabilityQuery.isRefetching || cashflowQuery.isRefetching
+            reliabilityQuery.isRefetching || transactionsQuery.isRefetching
           }
           onRefresh={() => {
             void refresh();
@@ -183,7 +191,7 @@ export function OverviewScreen() {
             <MetricCard
               label="Good months"
               value={`${reliabilityQuery.data.metrics.good_months}/6`}
-              supporting="Healthy cashflow months."
+              supporting="Healthy months in the scoring window."
             />
             <MetricCard
               label="Negative balance days"
@@ -243,26 +251,29 @@ export function OverviewScreen() {
         />
       )}
 
-      {cashflowQuery.isLoading && !cashflowQuery.data ? (
+      {transactionsQuery.isLoading && !transactionsQuery.data ? (
         <LoadingStateCard
-          title="Loading cashflow timeline"
-          message="Monthly income and essential expenses are being pulled now."
+          title="Loading monthly activity"
+          message="Monthly income and expense totals are being derived from transactions."
         />
-      ) : cashflowQuery.isError ? (
+      ) : transactionsQuery.isError ? (
         <ErrorStateCard
-          title="Could not load cashflow"
-          message={getErrorMessage(cashflowQuery.error)}
+          title="Could not load monthly activity"
+          message={getErrorMessage(transactionsQuery.error)}
           actionLabel="Retry"
           onAction={() => {
-            void cashflowQuery.refetch();
+            void transactionsQuery.refetch();
           }}
         />
-      ) : cashflowQuery.data?.months.length ? (
-        <CashflowChartCard months={cashflowQuery.data.months} />
+      ) : monthlyChartData.length ? (
+        <CashflowChartCard
+          months={monthlyChartData}
+          currency={reliabilityQuery.data?.currency ?? "EUR"}
+        />
       ) : (
         <EmptyStateCard
-          title="No cashflow data"
-          message="This user has no monthly cashflow records for the current window."
+          title="No monthly activity"
+          message="This user has no transactions in the current analysis window."
         />
       )}
 
@@ -278,8 +289,8 @@ export function OverviewScreen() {
               style={{ marginTop: 8, color: semanticColors.mutedText }}
             >
               Reliability is the top-line decision. Metrics quantify stability.
-              Drivers translate those metrics into human language. Cashflow
-              explains the monthly rhythm underneath the score.
+              Drivers translate those metrics into human language. Monthly
+              transaction activity explains the rhythm underneath the score.
             </Text>
             <Text variant="bodyMedium">
               The score uses {reliabilityQuery.data.currency} amounts, so all

@@ -25,3 +25,7 @@ export function pluralize(
 ) {
   return `${value} ${value === 1 ? singular : plural}`;
 }
+
+export function normalizeCoverageRatio(value: number) {
+  return Math.max(0, Math.min(value / 2, 1));
+}

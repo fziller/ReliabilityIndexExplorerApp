@@ -27,19 +27,6 @@ export interface Transaction {
   balance: number;
 }
 
-export interface CashflowMonth {
-  month: string;
-  income: number;
-  essential_expenses: number;
-}
-
-export interface CashflowResponse {
-  user_id: string;
-  from: string;
-  to: string;
-  months: CashflowMonth[];
-}
-
 export type TransactionAddedEvent = {
   type: 'TRANSACTION_ADDED';
   transaction: Transaction;

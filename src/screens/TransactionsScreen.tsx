@@ -3,7 +3,6 @@ import { useDeferredValue, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { getErrorMessage } from "../api/client";
-import { useTransactionsQuery } from "../api/transactions";
 import { QueryControlsCard } from "../components/QueryControlsCard";
 import {
   EmptyStateCard,
@@ -20,19 +19,26 @@ import {
   TransactionFilters,
 } from "../features/transactions/filters";
 import { semanticColors } from "../theme/theme";
+import { useTransactionsQuery } from "../hooks/useTransactionQuery";
 
 export function TransactionsScreen() {
   const { userId, transactionFrom, transactionTo } = useExplorerParams();
+
+  // states
+  const [filters, setFilters] = useState<TransactionFilters>(
+    defaultTransactionFilters,
+  );
+
+  const deferredSearch = useDeferredValue(filters.merchantSearch);
+
+  // queries
   const transactionsQuery = useTransactionsQuery(
     userId,
     transactionFrom,
     transactionTo,
   );
-  const [filters, setFilters] = useState<TransactionFilters>(
-    defaultTransactionFilters,
-  );
-  const deferredSearch = useDeferredValue(filters.merchantSearch);
 
+  // memos
   const effectiveFilters = useMemo(
     () => ({
       ...filters,

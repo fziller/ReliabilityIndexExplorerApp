@@ -68,7 +68,7 @@ export function QueryControlsCard() {
             color: semanticColors.mutedText,
           }}
         >
-          One score anchor date drives the six-month cashflow and transaction
+          One score anchor date drives the six-month reliability and transaction
           window.
         </Text>
         <View style={{ gap: 12, marginBottom: 12 }}>
