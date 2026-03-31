@@ -1,10 +1,9 @@
 import {
-  endOfMonth,
+  addYears,
   format,
   isValid,
   parseISO,
-  startOfMonth,
-  subMonths,
+  subDays,
 } from "date-fns";
 
 export interface AnalysisWindow {
@@ -31,8 +30,8 @@ export function deriveAnalysisWindow(scoreFrom: string): AnalysisWindow {
   }
 
   return {
-    transactionFrom: format(startOfMonth(subMonths(parsed, 5)), "yyyy-MM-dd"),
-    transactionTo: format(endOfMonth(parsed), "yyyy-MM-dd"),
+    transactionFrom: format(parsed, "yyyy-MM-dd"),
+    transactionTo: format(subDays(addYears(parsed, 1), 1), "yyyy-MM-dd"),
   };
 }
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Dimensions, View } from "react-native";
 import { BarChart, barDataItem } from "react-native-gifted-charts";
-import { Card, Chip, Text } from "react-native-paper";
+import { Card, Chip, Icon, Text } from "react-native-paper";
 import { semanticColors } from "../theme/theme";
 import { formatMonthLabel } from "../utils/date";
 import { formatCurrency } from "../utils/format";
@@ -83,15 +83,29 @@ export function CashflowChartCard({
         >
           <Chip
             compact
-            icon="square-rounded"
-            selectedColor={semanticColors.income}
+            style={{ alignSelf: "center" }}
+            textStyle={{ marginVertical: 0, lineHeight: 16 }}
+            icon={({ size }) => (
+              <Icon
+                source="square-rounded"
+                color={semanticColors.income}
+                size={size}
+              />
+            )}
           >
             Income
           </Chip>
           <Chip
             compact
-            icon="square-rounded"
-            selectedColor={semanticColors.expenses}
+            style={{ alignSelf: "center" }}
+            textStyle={{ marginVertical: 0, lineHeight: 16 }}
+            icon={({ size }) => (
+              <Icon
+                source="square-rounded"
+                color={semanticColors.expenses}
+                size={size}
+              />
+            )}
           >
             Expenses
           </Chip>

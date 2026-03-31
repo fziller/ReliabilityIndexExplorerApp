@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import { format, parseISO } from "date-fns";
+import { DatePickerModal } from "react-native-paper-dates";
 import {
   Button,
   Card,
@@ -17,6 +19,7 @@ export function QueryControlsCard() {
     useExplorerParams();
   const [draftUserId, setDraftUserId] = useState(userId);
   const [draftScoreFrom, setDraftScoreFrom] = useState(scoreFrom);
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,6 +53,20 @@ export function QueryControlsCard() {
     });
   };
 
+  const handlePickerConfirm = ({ date }: { date: Date | undefined }) => {
+    setPickerVisible(false);
+
+    if (!date) {
+      return;
+    }
+
+    setDraftScoreFrom(format(date, "yyyy-MM-dd"));
+  };
+
+  const pickerDate = isIsoDate(draftScoreFrom)
+    ? parseISO(draftScoreFrom)
+    : undefined;
+
   return (
     <Card
       mode="contained"
@@ -68,8 +85,8 @@ export function QueryControlsCard() {
             color: semanticColors.mutedText,
           }}
         >
-          One score anchor date drives the six-month reliability and transaction
-          window.
+          Edit the draft values here, then commit both with Apply Selection. The
+          score anchor only updates live screens after apply.
         </Text>
         <View style={{ gap: 12, marginBottom: 12 }}>
           <TextInput
@@ -80,37 +97,64 @@ export function QueryControlsCard() {
             autoCapitalize="none"
             style={{ backgroundColor: "transparent" }}
           />
-          <TextInput
-            mode="outlined"
-            label="Score anchor (YYYY-MM-DD)"
-            value={draftScoreFrom}
-            onChangeText={setDraftScoreFrom}
-            autoCapitalize="none"
-            style={{ backgroundColor: "transparent" }}
-          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setPickerVisible(true)}
+          >
+            <View pointerEvents="none">
+              <TextInput
+                mode="outlined"
+                label="Score anchor draft (picker only)"
+                value={draftScoreFrom}
+                editable={false}
+                right={<TextInput.Icon icon="calendar-month" />}
+                style={{ backgroundColor: "transparent" }}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
         <View
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
+            alignContent: "center",
+            alignSelf: "center",
             gap: 8,
-            marginBottom: 12,
           }}
         >
           <Chip compact icon="calendar-range">
-            Transactions: {derivedWindow?.transactionFrom ?? transactionFrom} to{" "}
+            Draft window: {derivedWindow?.transactionFrom ?? transactionFrom} to{" "}
             {derivedWindow?.transactionTo ?? transactionTo}
           </Chip>
-          <Chip compact icon="database-sync">
-            SSE sync on transaction deltas
-          </Chip>
         </View>
+        <Text
+          variant="bodySmall"
+          style={{
+            marginTop: 8,
+            color: semanticColors.mutedText,
+            alignSelf: "center",
+          }}
+        >
+          Current live window: {transactionFrom} to {transactionTo}
+        </Text>
         <HelperText type="error" visible={Boolean(error)}>
           {error}
         </HelperText>
         <Button mode="contained" onPress={handleApply}>
-          Apply Window
+          Apply selection
         </Button>
+        <DatePickerModal
+          locale="de"
+          mode="single"
+          visible={pickerVisible}
+          date={pickerDate}
+          onDismiss={() => setPickerVisible(false)}
+          onConfirm={handlePickerConfirm}
+          saveLabel="Select"
+          label="Select anchor date"
+          inputEnabled={false}
+          animationType="fade"
+        />
       </Card.Content>
     </Card>
   );

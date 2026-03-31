@@ -86,6 +86,7 @@ export function LiveTransactionSync() {
   }, []);
 
   useEffect(() => {
+    // Stop here, if app is active or we do not have the necessary data set.
     if (
       appState !== "active" ||
       !userId ||
@@ -95,6 +96,7 @@ export function LiveTransactionSync() {
       return;
     }
 
+    // Backend sends connected and transaction event. We only care about transaction events for now.
     const eventSource = new EventSource<"connected" | "transaction">(
       `${API_BASE_URL}/api/users/${userId}/transaction-events`,
       {
@@ -129,6 +131,7 @@ export function LiveTransactionSync() {
           clearTimeout(reconnectTimerRef.current);
         }
 
+        // Make sure that we get the latest data from the server also for the other endpoints, if an event is received successfully.
         reconnectTimerRef.current = setTimeout(() => {
           void queryClient.invalidateQueries({
             queryKey: transactionsQueryKey(
@@ -167,5 +170,6 @@ export function LiveTransactionSync() {
     userId,
   ]);
 
+  // render nothing
   return null;
 }

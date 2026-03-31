@@ -56,8 +56,8 @@ export function TransactionFiltersCard({
             color: semanticColors.mutedText,
           }}
         >
-          10k+ rows stay readable by virtualizing the list and keeping filtering
-          local.
+          Search for a specific merchant here. Sort and filter transactions
+          below.
         </Text>
         <Searchbar
           placeholder="Search merchant"

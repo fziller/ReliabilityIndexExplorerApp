@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import { Card, Text } from "react-native-paper";
 import { getErrorMessage } from "../api/client";
 import { CashflowChartCard } from "../components/CashflowChartCard";
 import { ExplanationCard } from "../components/ExplanationCard";
 import { MetricCard } from "../components/MetricCard";
 import { QueryControlsCard } from "../components/QueryControlsCard";
+import ReliabilityScoreCard from "../components/ReliabilityScoreCard";
 import { ScoreBreakdownCard } from "../components/ScoreBreakdownCard";
 import EmptyStateCard from "../components/StateCards/EmptyStateCard";
 import ErrorStateCard from "../components/StateCards/ErrorStateCard";
@@ -15,10 +15,8 @@ import { useReliabilityQuery } from "../hooks/useReliabilityQuery";
 import { useTransactionsQuery } from "../hooks/useTransactionQuery";
 import { semanticColors } from "../theme/theme";
 import {
-  formatCurrency,
   formatPercent,
   formatRatio,
-  formatScoreBand,
   normalizeCoverageRatio,
   pluralize,
 } from "../utils/format";
@@ -92,9 +90,7 @@ export function OverviewScreen() {
       contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
       refreshControl={
         <RefreshControl
-          refreshing={
-            reliabilityQuery.isRefetching || transactionsQuery.isRefetching
-          }
+          refreshing={reliabilityQuery.isLoading || transactionsQuery.isLoading}
           onRefresh={() => {
             void refresh();
           }}
@@ -102,8 +98,7 @@ export function OverviewScreen() {
       }
     >
       <QueryControlsCard />
-
-      {reliabilityQuery.isLoading && !reliabilityQuery.data ? (
+      {reliabilityQuery.isLoading ? (
         <LoadingStateCard
           title="Loading reliability snapshot"
           message="Pulling score, metrics and drivers from the mock API."
@@ -119,43 +114,11 @@ export function OverviewScreen() {
         />
       ) : reliabilityQuery.data ? (
         <>
-          <Card
-            mode="contained"
-            style={{
-              marginBottom: 16,
-              backgroundColor: semanticColors.cardBackground,
-            }}
-          >
-            <Card.Content>
-              <Text variant="labelLarge">Reliability Overview</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  marginTop: 12,
-                }}
-              >
-                <View>
-                  <Text variant="displaySmall" style={{ color: scoreTone }}>
-                    {reliabilityQuery.data.reliability_index}
-                  </Text>
-                  <Text variant="titleMedium">
-                    {formatScoreBand(reliabilityQuery.data.score_band)}{" "}
-                    confidence band
-                  </Text>
-                </View>
-                <View style={{ alignItems: "flex-end", gap: 4 }}>
-                  <Text variant="labelMedium">Score anchor</Text>
-                  <Text variant="bodyMedium">{reliabilityQuery.data.from}</Text>
-                  <Text variant="labelMedium">Analysis window</Text>
-                  <Text variant="bodyMedium">
-                    {transactionFrom} to {transactionTo}
-                  </Text>
-                </View>
-              </View>
-            </Card.Content>
-          </Card>
+          <ReliabilityScoreCard
+            reliabilityIndex={reliabilityQuery.data.reliability_index}
+            scoreTone={scoreTone}
+            scoreBand={reliabilityQuery.data.score_band}
+          />
 
           <View
             style={{
@@ -274,36 +237,6 @@ export function OverviewScreen() {
           message="This user has no transactions in the current analysis window."
         />
       )}
-
-      {reliabilityQuery.data ? (
-        <Card
-          mode="contained"
-          style={{ backgroundColor: semanticColors.cardBackground }}
-        >
-          <Card.Content>
-            <Text variant="titleMedium">Reading the score</Text>
-            <Text
-              variant="bodyMedium"
-              style={{ marginTop: 8, color: semanticColors.mutedText }}
-            >
-              Reliability is the top-line decision. Metrics quantify stability.
-              Drivers translate those metrics into human language. Monthly
-              transaction activity explains the rhythm underneath the score.
-            </Text>
-            <Text variant="bodyMedium">
-              The score uses {reliabilityQuery.data.currency} amounts, so all
-              balances and charts stay in the same unit.
-            </Text>
-            <Text
-              variant="bodyMedium"
-              style={{ marginTop: 8, color: semanticColors.mutedText }}
-            >
-              Example monthly expense anchor:{" "}
-              {formatCurrency(900, reliabilityQuery.data.currency)}
-            </Text>
-          </Card.Content>
-        </Card>
-      ) : null}
     </ScrollView>
   );
 }

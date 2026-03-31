@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { useDeferredValue, useMemo, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { getErrorMessage } from "../api/client";
 import { QueryControlsCard } from "../components/QueryControlsCard";
@@ -59,6 +59,7 @@ export function TransactionsScreen() {
 
   const currency = "EUR";
 
+  // Create the loading state in case transactions are still in flight
   if (transactionsQuery.isLoading && !transactionsQuery.data) {
     return (
       <ScrollView
@@ -74,6 +75,7 @@ export function TransactionsScreen() {
     );
   }
 
+  // Show any error which appears fetching the data
   if (transactionsQuery.isError) {
     return (
       <ScrollView
@@ -94,10 +96,18 @@ export function TransactionsScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}>
+    <View style={{ backgroundColor: semanticColors.screenBackground, flex: 1 }}>
       <FlashList
         data={visibleTransactions}
         keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={transactionsQuery.isLoading}
+            onRefresh={() => {
+              void transactionsQuery.refetch();
+            }}
+          />
+        }
         ListHeaderComponent={
           <View style={{ padding: 16, paddingBottom: 8 }}>
             <QueryControlsCard />
@@ -109,7 +119,7 @@ export function TransactionsScreen() {
             />
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "space-between",
                 alignItems: "center",
                 gap: 12,
@@ -117,7 +127,7 @@ export function TransactionsScreen() {
               }}
             >
               <Text variant="bodyMedium">
-                Window: {transactionFrom} to {transactionTo}
+                Transaction window: {transactionFrom} to {transactionTo}
               </Text>
               <Button
                 mode="contained-tonal"
@@ -144,7 +154,9 @@ export function TransactionsScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <TransactionRow item={item} currency={currency} />
+          <View style={{ paddingHorizontal: 16 }}>
+            <TransactionRow item={item} currency={currency} />
+          </View>
         )}
         contentContainerStyle={{ paddingBottom: 24 }}
       />
