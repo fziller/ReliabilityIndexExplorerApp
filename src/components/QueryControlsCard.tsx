@@ -90,6 +90,7 @@ export function QueryControlsCard() {
         </Text>
         <View style={{ gap: 12, marginBottom: 12 }}>
           <TextInput
+            testID="query-controls-user-id-input"
             mode="outlined"
             label="User ID"
             value={draftUserId}
@@ -98,6 +99,7 @@ export function QueryControlsCard() {
             style={{ backgroundColor: "transparent" }}
           />
           <TouchableOpacity
+            testID="query-controls-date-trigger"
             activeOpacity={0.8}
             onPress={() => setPickerVisible(true)}
           >
@@ -140,7 +142,7 @@ export function QueryControlsCard() {
         <HelperText type="error" visible={Boolean(error)}>
           {error}
         </HelperText>
-        <Button mode="contained" onPress={handleApply}>
+        <Button testID="query-controls-apply-button" mode="contained" onPress={handleApply}>
           Apply selection
         </Button>
         <DatePickerModal

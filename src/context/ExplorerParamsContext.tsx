@@ -15,7 +15,12 @@ interface ExplorerParamsContextValue {
   setParams: (next: { userId: string; scoreFrom: string }) => void;
 }
 
-const DEFAULT_PARAMS = {
+export interface ExplorerParamsState {
+  userId: string;
+  scoreFrom: string;
+}
+
+const DEFAULT_PARAMS: ExplorerParamsState = {
   userId: "user_123",
   scoreFrom: "2026-02-20",
 };
@@ -24,8 +29,18 @@ const ExplorerParamsContext = createContext<ExplorerParamsContextValue | null>(
   null,
 );
 
-export function ExplorerParamsProvider({ children }: PropsWithChildren) {
-  const [params, setParams] = useState(DEFAULT_PARAMS);
+interface ExplorerParamsProviderProps extends PropsWithChildren {
+  initialParams?: Partial<ExplorerParamsState>;
+}
+
+export function ExplorerParamsProvider({
+  children,
+  initialParams,
+}: ExplorerParamsProviderProps) {
+  const [params, setParams] = useState<ExplorerParamsState>({
+    ...DEFAULT_PARAMS,
+    ...initialParams,
+  });
 
   const value = useMemo(() => {
     const analysisWindow = deriveAnalysisWindow(params.scoreFrom);
