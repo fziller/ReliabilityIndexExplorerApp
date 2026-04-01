@@ -2,12 +2,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import EventSource from "react-native-sse";
-import { sortTransactions } from "../../api/transactions";
 import { Transaction, TransactionEvent } from "../../api/types";
 import { API_BASE_URL } from "../../config/api";
 import { useExplorerParams } from "../../context/ExplorerParamsContext";
 import { reliabilityQueryKey } from "../../hooks/useReliabilityQuery";
 import { transactionsQueryKey } from "../../hooks/useTransactionQuery";
+import { sortTransactions } from "../../utils/transactions";
 
 function isWithinWindow(date: string, from: string, to: string) {
   return date >= from && date <= to;
