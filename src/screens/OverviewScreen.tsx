@@ -20,7 +20,7 @@ import {
   normalizeCoverageRatio,
   pluralize,
 } from "../utils/format";
-import { buildMonthlyChartData } from "../utils/screenHelper";
+import { buildMonthlyChartData } from "../utils/reliability";
 
 export function OverviewScreen() {
   const { userId, scoreFrom, transactionFrom, transactionTo } =
