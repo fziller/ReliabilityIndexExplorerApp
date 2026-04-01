@@ -129,17 +129,6 @@ function createTransactionsQuery(overrides: Record<string, unknown> = {}) {
 describe("OverviewScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // mockUseReliabilityQuery.mockReset();
-    // mockUseTransactionsQuery.mockReset();
-    // mockQueryControlsCard.mockClear();
-    // mockCashflowChartCard.mockClear();
-    // mockExplanationCard.mockClear();
-    // mockMetricCard.mockClear();
-    // mockReliabilityScoreCard.mockClear();
-    // mockScoreBreakdownCard.mockClear();
-    // mockLoadingStateCard.mockClear();
-    // mockEmptyStateCard.mockClear();
-    // mockErrorStateCard.mockClear();
   });
 
   it("shows both loading states when reliability and monthly activity are loading", () => {
