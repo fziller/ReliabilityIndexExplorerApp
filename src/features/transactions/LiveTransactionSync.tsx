@@ -13,7 +13,7 @@ function isWithinWindow(date: string, from: string, to: string) {
   return date >= from && date <= to;
 }
 
-function applyTransactionEvent(
+export function applyTransactionEvent(
   currentTransactions: Transaction[] | undefined,
   transactionEvent: TransactionEvent,
   transactionFrom: string,
