@@ -86,6 +86,7 @@ export function OverviewScreen() {
 
   return (
     <ScrollView
+      testID="overview-scroll-view"
       style={{ flex: 1, backgroundColor: semanticColors.screenBackground }}
       contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
       refreshControl={
