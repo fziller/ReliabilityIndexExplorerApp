@@ -173,3 +173,94 @@ AI tooling was used during development and documentation in the following ways:
 - to review and validate test plans before finalizing them
 
 All final decisions, code checks, and repository-specific documentation statements were reviewed against the actual implementation in this repository.
+
+## **Discussion & Design Prompts (For Follow-up Interview)**
+
+The following topics are **not required to be implemented** as part of the assignment.
+They will be explored during the **discussion interview** to understand your thinking, trade-offs, and system design approach.
+Please include your thoughts in the README.
+
+---
+
+### API Design & Evolution
+
+- How would your frontend handle evolving or breaking API contracts?
+
+Improving the API contract by adding new fields should be handled easily by the frontend. For breaking changes, using versioned endpoints or feature flags will mitigate problems. In general, those contract changes should already be seen during testing period by having proper contract tests in place.
+
+- How would you support adding new scoring signals over time?
+
+Any new signal can be handled as an additional feature in the application. API can send any new signal and the app will ignore it until the UI and handling for it is build. Also, new signals can be feature flagged so that the app can be prepared for usage.
+
+---
+
+### Data Ownership & Boundaries
+
+- What responsibilities belong in the frontend vs backend?
+
+In general, the backend should master the data and should make sure to sort / filter and calculate responses properly. Responsibility of frontend should be mostly to fetch, cache and display any data and allow the user to navigate.
+
+- What would you compute on the frontend vs backend?
+
+Currently, the sorting and filtering will be done by the frontend as well as calculating the monthly chart. Sorting or filtering in viewport can be done by the application; or doing local searches.
+
+---
+
+### Data Consistency & Correctness
+
+- How would you ensure correctness when:
+  - transactions arrive out of order
+  - partial data is loaded
+  - updates happen frequently
+- What would be your source of truth?
+
+First of all, source of truth should be the data available in backend. In case of an error during fetching the data, the app should be designed to rollback to a previous state, which then might not contain the full dataset but make the app responsive still. Partial or incomplete data can be marked as stale in the cache itself, so that another full refetch of data allows to update the cache with the right data.
+
+---
+
+### Scalability
+
+- How would your solution evolve for:
+
+- 100k+ transactions - The component `Flashlist` being used for showing the data is already optimised to handle 100k+ items to be shown. UI will most likely not become the problem here, but keeping this amount of data in memory might be. A good improvement would be using an infinite query as well, allowing to reduce the overall cache size being stored in memory.
+- high-frequency updates - Currently, the number of updates is limited to every some seconds, but if these becomes faster, the app might run into data fetch issues. On a high frequence, we can batch requests and fetched every 250ms - 500ms, so that we have a render state available for the user. A smart selection of data to be fetched in a reduced number of endpoints might mitigate issues here.
+
+---
+
+### Real-Time Updates
+
+- How would you design for continuous streaming updates?
+- How would you maintain UI consistency under frequent changes?
+
+Throttling from events could be a proper step to avoid render hells. This would cause the data to not be fully real-time but would keep the app responsive over time. An update like every 250ms - 500ms could already do a great improvement. Incoming events would update the queryCache at first, so that we have an update in UI, while the application can still load and handle data in background.
+
+---
+
+### Caching & Performance
+
+- What caching strategy would you use?
+
+React-Query as state-management tools caches data upon arriving and refetches any data necessary in case a server-side event is being received. Data is being stored per queryKey (e.g. `userId`, `from`, `to`). The `staleTime` can be set rather small (seconds), so that we make sure to always fetch latest data, but `gcTime` can be higher to make sure app stays responsive even over low-network areas.
+
+- How would you handle cache invalidation when data changes?
+
+React-Query offers a nice way to actually do it: Caches will be marked as stale, so they are still available for the UI, but whenever the cache is being requested, it tries to update the info.
+
+- What parts of the system are most likely to become bottlenecks?
+
+I would assume, that render cost to due high-frequent updates can become a problem as well as the number of network requests (requests/min) being made can made problem in the future.
+
+---
+
+### Incident Thinking
+
+- If the UI becomes slow or incorrect in production:
+- how would you debug it?
+
+It is usually a good idea to use a tracing system, for example from `Sentry`, to follow the timings of actions being done in the system. A sample rate can be made configurable to let the production app stay perfomant. In example, we could create different spans for:
+
+- User pressed button
+- React-query starts network request
+- Response received
+- Screen update finished
+  This would already give an idea where the problem might be at. Sentry also offers `Profiling` which is doing a very similar thing already.
